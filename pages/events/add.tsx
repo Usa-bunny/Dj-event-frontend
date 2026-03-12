@@ -1,5 +1,9 @@
-export default function AddPages() {
+import Layout from "@/components/Layout";
+
+export default function AddEventPages() {
   return (
-    <div>add</div>
-  )
+    <Layout title="Add New Event">
+      <h1>Add Event</h1>
+    </Layout>
+  );
 }

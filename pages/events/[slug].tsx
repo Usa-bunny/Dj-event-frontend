@@ -1,5 +1,9 @@
-export default function slu() {
+import Layout from "@/components/Layout";
+
+export default function EventPage() {
   return (
-    <div>not found</div>
-  )
+    <Layout>
+      <h1>My Event</h1>
+    </Layout>
+  );
 }
