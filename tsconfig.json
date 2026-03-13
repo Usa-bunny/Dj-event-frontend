@@ -24,6 +24,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "pages/404.jsx", "pages/api/events/[slug].js", "pages/index.jsx", "pages/api/events/index.js", "components/Layout.jsx", "components/Showcase.jsx", "components/Header.jsx", "components/Footer.jsx", "components/EventItem.jsx", "pages/about.jsx", "pages/events/index.jsx", "pages/events/add.jsx", "pages/events/[slug].jsx"  ],
   "exclude": ["node_modules"]
 }
