@@ -1,3 +1,4 @@
+import moment from "moment"
 import Link from "next/link";
 import Image from "next/image";
 import styles from "@/styles/EventItem.module.css";
@@ -20,8 +21,8 @@ export default function EventItem({ event }) {
 
       <div className={styles.info}>
         <span>
-          {new Date(event.date).toDateString(navigator.language)} at{" "}
-          {event.time}
+          {moment(event.date).format("MMM DD, YYYY")} at{" "}
+          {moment(event.time, ["HH:mm", "hh:mm A"]).format("hh:mm A")}
         </span>
         <h3>{event.name}</h3>
       </div>

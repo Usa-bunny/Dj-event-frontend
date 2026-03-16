@@ -23,7 +23,7 @@ export default function HomePage({ events }) {
 }
 
 export async function getStaticProps() {
-  const res = await fetch(`${API_URL}/api/events?populate=*&sort=date:asc&pagination[limit]=3`);
+  const res = await fetch(`${API_URL}/api/events?populate=*&sort=updatedAt:desc&pagination[limit]=3`);
   // populate=* → include all relations.
   // sort=date:asc → sort by date field in ascending order (oldest first).
   // pagination[limit]=3 → limit the response to 3 items.

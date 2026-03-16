@@ -1,34 +1,57 @@
+import moment from 'moment'
+import { ToastContainer, toast } from "react-toastify";
 import { FaPencilAlt, FaTimes } from "react-icons/fa";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import Layout from "@/components/Layout";
 import { API_URL } from "@/config/index";
 import styles from "@/styles/Event.module.css";
 
 export default function EventPage({ event }) {
-  const deleteEvent = e => {
-    console.log("delete")
-  }
+  const router = useRouter();
+
+  const deleteEvent = async (e) => {
+    if (!confirm("Are you sure?")) return;
+
+    const res = await fetch(`${API_URL}/api/events/${event.documentId}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      toast.error("Failed to delete event");
+      return;
+    }
+
+    router.push("/events");
+  };
 
   return (
-    <Layout>
+    <Layout title={`${event.name}`}>
       <div className={styles.event}>
         <div className={styles.controls}>
-          <Link href={`/events/edit/${event.id}`}>
+          <Link href={`/events/edit/${event.documentId}`}>
             <FaPencilAlt /> Edit Event
           </Link>
-          <a href="#" className={styles.delete} onClick={deleteEvent}>
+          <a className={styles.delete} onClick={deleteEvent}>
             <FaTimes /> Delete Event
           </a>
         </div>
 
         <span>
-          {new Date(event.date).toDateString(navigator.language)} at {event.time}
+          {moment(event.date).format("MMM DD, YYYY")} at{" "}
+          {moment(event.time, ["HH:mm", "hh:mm A"]).format("hh:mm A")}
         </span>
         <h1>{event.name}</h1>
+        <ToastContainer />
         {event.image && (
           <div className={styles.image}>
-            <Image src={event.image.formats.large.url} width={960} height={600} alt="image"/>
+            <Image
+              src={event.image.formats.large.url}
+              width={960}
+              height={600}
+              alt="image"
+            />
           </div>
         )}
 
@@ -39,7 +62,9 @@ export default function EventPage({ event }) {
         <h3>Venue: {event.venue}</h3>
         <p>{event.address}</p>
 
-        <Link href={"/events"} className={styles.back}>{'<'} Go Back</Link>
+        <Link href={"/events"} className={styles.back}>
+          {"<"} Go Back
+        </Link>
       </div>
     </Layout>
   );
@@ -60,7 +85,9 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { slug } }) {
-  const res = await fetch(`${API_URL}/api/events?populate=*&filters[slug][$eq]=${slug}`);
+  const res = await fetch(
+    `${API_URL}/api/events?populate=*&filters[slug][$eq]=${slug}`,
+  );
   // filters[slug][$eq]=... → filter by slug equal that string.
   const events = await res.json();
 
@@ -72,12 +99,12 @@ export async function getStaticProps({ params: { slug } }) {
 }
 
 // export async function getServerSideProps({ query: { slug } }) {
-//   const res = await fetch(`${API_URL}/api/events/${slug}`);
+//   const res = await fetch(`${API_URL}/api/events?populate=*&filters[slug][$eq]=${slug}`);
 //   const events = await res.json();
 
 //   return {
 //     props: {
-//       event: events[0],
+//       event: events.data[0],
 //     },
 //   };
 // }
