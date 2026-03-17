@@ -25,7 +25,7 @@ export default function AddEventPages() {
 
     const hasEmptyFields = Object.values(values).some((el) => el === "");
     if (hasEmptyFields) {
-      toast.error("Please fill in all fields");
+      toast.error("Please fill in all fields!");
       return;
     }
 
