@@ -14,7 +14,7 @@ export default function Modal({ show, onClose, children, title }) {
   };
 
   const modalContent = show ? (
-    <div onClick={handleClose} className={styles.overlay}>
+    <div className={styles.overlay}>
       <div className={styles.modal}>
         <div className={styles.header}>
           <a onClick={handleClose}>

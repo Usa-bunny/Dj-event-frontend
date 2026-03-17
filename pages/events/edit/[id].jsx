@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Layout from "@/components/Layout";
 import Modal from "@/components/Modal";
+import ImageUpload from "@/components/ImageUpload";
 import { API_URL } from "@/config/index";
 import styles from "@/styles/Form.module.css";
 
@@ -66,6 +67,14 @@ export default function EditEventPages({ event }) {
     const { name, value } = e.target;
     setValues({ ...values, [name]: value });
   };
+
+  const imageUploaded = async (e) => {
+    const res = await fetch(`${API_URL}/api/events/${event.documentId}?populate=*`)
+    const events = await res.json()
+    setImagePreview(events.data.image.formats.thumbnail.url)
+    setShowModal(false)
+    toast.success("Upload success");
+  }
 
   return (
     <Layout title="Edit Event">
@@ -156,6 +165,7 @@ export default function EditEventPages({ event }) {
         <Image src={imagePreview} height={100} width={170} />
       ) : (
         <div>
+          <Image src="/images/event-default.png" height={100} width={170} />
           <p>No image uploaded</p>
         </div>
       )}
@@ -167,7 +177,7 @@ export default function EditEventPages({ event }) {
       </div>
 
       <Modal show={showModal} onClose={() => setShowModal(false)}>
-        Image
+        <ImageUpload eventId={event.id} imageUploaded={imageUploaded}/>
       </Modal>
     </Layout>
   );
