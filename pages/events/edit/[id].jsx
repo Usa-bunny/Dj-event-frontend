@@ -1,5 +1,5 @@
 import moment from "moment";
-import {FaImage} from "react-icons/fa"
+import { FaImage } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import { useState } from "react";
 import { useRouter } from "next/router";
@@ -24,7 +24,7 @@ export default function EditEventPages({ event }) {
   const [imagePreview, setImagePreview] = useState(
     event.image ? event.image.formats.thumbnail.url : null,
   );
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(false);
 
   const router = useRouter();
 
@@ -69,12 +69,14 @@ export default function EditEventPages({ event }) {
   };
 
   const imageUploaded = async (e) => {
-    const res = await fetch(`${API_URL}/api/events/${event.documentId}?populate=*`)
-    const events = await res.json()
-    setImagePreview(events.data.image.formats.thumbnail.url)
-    setShowModal(false)
+    const res = await fetch(
+      `${API_URL}/api/events/${event.documentId}?populate=*`,
+    );
+    const events = await res.json();
+    setImagePreview(events.data.image.formats.thumbnail.url);
+    setShowModal(false);
     toast.success("Upload success");
-  }
+  };
 
   return (
     <Layout title="Edit Event">
@@ -171,21 +173,25 @@ export default function EditEventPages({ event }) {
       )}
 
       <div>
-        <button onClick={() => setShowModal(true)} className="btn-secondary btn-icon">
-          <FaImage/> Set Image 
+        <button
+          onClick={() => setShowModal(true)}
+          className="btn-secondary btn-icon"
+        >
+          <FaImage /> Set Image
         </button>
       </div>
 
       <Modal show={showModal} onClose={() => setShowModal(false)}>
-        <ImageUpload eventId={event.id} imageUploaded={imageUploaded}/>
+        <ImageUpload eventId={event.id} imageUploaded={imageUploaded} />
       </Modal>
     </Layout>
   );
 }
 
-export async function getServerSideProps({ params: { id } }) {
+export async function getServerSideProps({ params: { id }, req }) {
   const res = await fetch(`${API_URL}/api/events/${id}?populate=*`);
   const event = await res.json();
+  console.log(req.headers.cookie)
 
   return {
     props: {
