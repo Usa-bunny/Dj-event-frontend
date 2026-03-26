@@ -4,7 +4,7 @@ import DashboardEvent from "@/components/DashboardEvent";
 import { API_URL } from "@/config/index";
 import styles from "@/styles/Dashboard.module.css";
 
-export default function DashboardPage({ events }) {
+export default function DashboardPage({ events, token }) {
   return (
     <Layout title="User Dashboard">
       <div className={styles.dash}>
@@ -12,7 +12,7 @@ export default function DashboardPage({ events }) {
         <h3>My Events</h3>
 
         {events.map((event) => (
-          <DashboardEvent key={event.id} event={event} />
+          <DashboardEvent key={event.id} event={event} token={token} />
         ))}
       </div>
     </Layout>
@@ -42,6 +42,7 @@ export async function getServerSideProps({ req }) {
           return acc;
         }, {}),
       ),
+      token,
     },
   };
 }

@@ -1,4 +1,5 @@
 import moment from "moment";
+import { parseCookie } from "@/helpers/index";
 import { ToastContainer, toast } from "react-toastify";
 import { useState } from "react";
 import { useRouter } from "next/router";
@@ -7,7 +8,7 @@ import Layout from "@/components/Layout";
 import { API_URL } from "@/config/index";
 import styles from "@/styles/Form.module.css";
 
-export default function AddEventPages() {
+export default function AddEventPages({ token }) {
   const [values, setValues] = useState({
     name: "",
     performers: "",
@@ -32,23 +33,33 @@ export default function AddEventPages() {
     const dataToSend = {
       ...values,
       slug: values.name.trim().toLowerCase().replaceAll(" ", "-"),
-      date: values.date, 
-      time: moment(values.time, "HH:mm").format("HH:mm:ss.SSS"), 
+      date: values.date,
+      time: moment(values.time, "HH:mm").format("HH:mm:ss.SSS"),
     };
 
     const res = await fetch(`${API_URL}/api/events`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ data: dataToSend }),
     });
 
     if (!res.ok) {
+      if (res.status === 403 || res.status === 401) {
+        toast.error("No token included");
+        return;
+      }
       toast.error("Something went wrong");
       return;
     }
 
     const event = await res.json();
-    router.push(`/events/${event.data.slug}`);
+    toast.info("Uploading...");
+    setInterval(() => {
+      router.push(`/events/${event.data.slug}`);
+    }, 5500);
   };
 
   const handleInputChange = (e) => {
@@ -145,4 +156,12 @@ export default function AddEventPages() {
       </form>
     </Layout>
   );
+}
+
+export async function getServerSideProps({ req }) {
+  const { token } = parseCookie(req);
+
+  return {
+    props: { token },
+  };
 }
