@@ -1,4 +1,5 @@
 import moment from "moment";
+import { parseCookie } from "@/helpers/index";
 import { FaImage } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import { useState } from "react";
@@ -11,7 +12,7 @@ import ImageUpload from "@/components/ImageUpload";
 import { API_URL } from "@/config/index";
 import styles from "@/styles/Form.module.css";
 
-export default function EditEventPages({ event }) {
+export default function EditEventPages({ event, token }) {
   const [values, setValues] = useState({
     name: event.name,
     performers: event.performers,
@@ -49,17 +50,26 @@ export default function EditEventPages({ event }) {
 
     const res = await fetch(`${API_URL}/api/events/${event.documentId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ data: dataToSend }),
     });
 
-    console.log(res);
     if (!res.ok) {
-      toast.error("Something went wrong!");
+      if (res.status === 403 || res.status === 401) {
+        toast.error("No token included");
+        return;
+      }
+      toast.error("Something went wrong");
       return;
     } else {
       const event = await res.json();
-      router.push(`/events/${event.data.slug}`);
+      toast.info("Uploading...");
+      setInterval(() => {
+        router.push(`/events/${event.data.slug}`);
+      }, 5500);
     }
   };
 
@@ -182,7 +192,11 @@ export default function EditEventPages({ event }) {
       </div>
 
       <Modal show={showModal} onClose={() => setShowModal(false)}>
-        <ImageUpload eventId={event.id} imageUploaded={imageUploaded} />
+        <ImageUpload
+          eventId={event.id}
+          imageUploaded={imageUploaded}
+          token={token}
+        />
       </Modal>
     </Layout>
   );
@@ -191,11 +205,12 @@ export default function EditEventPages({ event }) {
 export async function getServerSideProps({ params: { id }, req }) {
   const res = await fetch(`${API_URL}/api/events/${id}?populate=*`);
   const event = await res.json();
-  console.log(req.headers.cookie)
+  const { token } = parseCookie(req);
 
   return {
     props: {
       event: event.data,
+      token,
     },
   };
 }

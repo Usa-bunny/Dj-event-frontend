@@ -15,7 +15,7 @@ export default function DashboardPage({ events, token }) {
           <DashboardEvent key={event.id} event={event} token={token} />
         ))}
       </div>
-    </Layout>
+    </Layout> 
   );
 }
 

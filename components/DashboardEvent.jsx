@@ -12,10 +12,10 @@ export default function DashboardEvent({ event, token }) {
     if (!confirm("Are you sure?")) return;
 
     const res = await fetch(`${API_URL}/api/events/${event.documentId}`, {
-      method: "DELETE",
+      method: "DELETE", 
       headers: {
         Authorization: `Bearer ${token}`,
-      },
+      }, 
     });
 
     if (!res.ok) {
