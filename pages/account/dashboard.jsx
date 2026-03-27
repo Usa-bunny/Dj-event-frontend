@@ -1,10 +1,27 @@
 import { parseCookie } from "@/helpers/index";
+import { useContext } from "react";
 import Layout from "@/components/Layout";
 import DashboardEvent from "@/components/DashboardEvent";
-import { API_URL } from "@/config/index";
+import AuthContext from "@/context/AuthContex";
 import styles from "@/styles/Dashboard.module.css";
 
-export default function DashboardPage({ events, token }) {
+export default function DashboardPage({ token }) {
+  const { user, error } = useContext(AuthContext);
+
+  if (!user)
+    return (
+      <Layout title="User Dashboard">
+        <h1>Loading...</h1>
+      </Layout>
+    );
+
+  const events = Object.values(
+    (user.event || []).reduce((acc, event) => {
+      acc[event.documentId] = event;
+      return acc;
+    }, {}),
+  );
+
   return (
     <Layout title="User Dashboard">
       <div className={styles.dash}>
@@ -15,34 +32,14 @@ export default function DashboardPage({ events, token }) {
           <DashboardEvent key={event.id} event={event} token={token} />
         ))}
       </div>
-    </Layout> 
+    </Layout>
   );
 }
 
 export async function getServerSideProps({ req }) {
   const { token } = parseCookie(req);
 
-  const res = await fetch(
-    `${API_URL}/api/users/me?populate[event][populate][image]=*`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-  );
-
-  const data = await res.json();
-
   return {
-    props: {
-      events: Object.values(
-        data.event.reduce((acc, event) => {
-          acc[event.documentId] = event;
-          return acc;
-        }, {}),
-      ),
-      token,
-    },
+    props: { token },
   };
 }

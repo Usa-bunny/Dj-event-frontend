@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import Layout from "@/components/Layout";
+import MapEvent from "@/components/MapEvent";
 import { API_URL } from "@/config/index";
 import styles from "@/styles/Event.module.css";
 
@@ -59,6 +60,8 @@ export default function EventPage({ event }) {
         <p>{event.description}</p>
         <h3>Venue: {event.venue}</h3>
         <p>{event.address}</p>
+
+        <MapEvent event={event}/>
 
         <Link href={"/events"} className={styles.back}>
           {"<"} Go Back

@@ -194,6 +194,7 @@ export default function EditEventPages({ event, token }) {
       <Modal show={showModal} onClose={() => setShowModal(false)}>
         <ImageUpload
           eventId={event.id}
+          imageId={event.image?.id}
           imageUploaded={imageUploaded}
           token={token}
         />
